@@ -1,8 +1,8 @@
 const express = require('express')
 const app = express()
 app.use(express.urlencoded({extended: true})) 
-
 const MongoClient = require('mongodb').MongoClient;
+app.set('view engine', 'ejs')
 
 var db
 MongoClient.connect('mongodb+srv://admin:admin123@cluster0.y6p2d0u.mongodb.net/?retryWrites=true&w=majority', function(err, client) {
@@ -38,4 +38,8 @@ app.post('/add', function(req, res) {
 
     console.log(req.body)
     res.send("전송완료")
+})
+
+app.get('/list', function(req, res) {
+    res.render('list.ejs')
 })
