@@ -2,8 +2,14 @@ const express = require('express')
 const app = express()
 app.use(express.urlencoded({extended: true})) 
 
-app.listen(8080, function() {
-    console.log('start server... port : 8080')
+const MongoClient = require('mongodb').MongoClient;
+
+MongoClient.connect('mongodb+srv://admin:admin123@cluster0.y6p2d0u.mongodb.net/?retryWrites=true&w=majority', function(err, client) {
+    if (err) return console.log(err);
+    //서버띄우는 코드 여기로 옮기기
+    app.listen('8080', function(){
+      console.log('listening on 8080')
+    });
 })
 
 app.get('/pet', function(req, res) {
