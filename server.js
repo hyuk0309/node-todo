@@ -32,12 +32,14 @@ app.get('/write', function(req, res) {
 
 app.post('/add', function(req, res) {
 
-    db.collection('post').insertOne( { 제목 : req.body.title, 날짜 : req.body.date} , function(err, result) {
-	    console.log('저장완료'); 
-	});
+    db.collection('counter').findOne({ name : '게시물갯수' }, function(err, result) {
+        var totalPostCount = result.totalPost
+        db.collection('post').insertOne( { _id : (totalPostCount + 1), 제목 : req.body.title, 날짜 : req.body.date} , function(err, result) {
+            console.log('저장완료');
+            res.send('전송완료')
+        });
+    })
 
-    console.log(req.body)
-    res.send("전송완료")
 })
 
 app.get('/list', function(req, res) {
