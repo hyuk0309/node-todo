@@ -32,11 +32,15 @@ app.get('/write', function(req, res) {
 
 app.post('/add', function(req, res) {
 
-    db.collection('counter').findOne({ name : '게시물갯수' }, function(err, result) {
+    db.collection('counter').findOne({ name : '게시물갯수' }, function(_, result) {
         var totalPostCount = result.totalPost
-        db.collection('post').insertOne( { _id : (totalPostCount + 1), 제목 : req.body.title, 날짜 : req.body.date} , function(err, result) {
-            console.log('저장완료');
-            res.send('전송완료')
+        db.collection('post').insertOne( { _id : (totalPostCount + 1), 제목 : req.body.title, 날짜 : req.body.date} , function(_, _) {
+            db.collection('counter').updateOne({ name:'게시물갯수' }, { $inc: {totalPost:1} }, function(err, _) {
+                if(err) {
+                    console.log(err)
+                }
+                res.send('전송완료')
+            })
         });
     })
 
