@@ -4,6 +4,8 @@ app.use(express.urlencoded({extended: true}))
 const MongoClient = require('mongodb').MongoClient;
 app.set('view engine', 'ejs')
 
+app.use('/public', express.static('public'))
+
 var db
 MongoClient.connect('mongodb+srv://admin:admin123@cluster0.y6p2d0u.mongodb.net/?retryWrites=true&w=majority', function(err, client) {
     if (err) return console.log(err)
@@ -23,11 +25,11 @@ app.get('/beauty', function(req, res) {
 })
 
 app.get('/', function(req, res) {
-    res.sendFile(__dirname + '/index.html')
+    res.render('index')
 })
 
 app.get('/write', function(req, res) {
-    res.sendFile(__dirname + '/write.html')
+    res.render('write')
 })
 
 app.post('/add', function(req, res) {
@@ -60,5 +62,11 @@ app.delete('/delete', function(req, res) {
     db.collection('post').deleteOne(req.body, function(err, result) {
         console.log('삭제완료')
         res.status(200)
+    })
+})
+
+app.get('/detail/:id', (req, res) => {
+    db.collection('post').findOne({_id : parseInt(req.params.id)}, (err, result) => {
+        res.render('detail.ejs', {data : result})
     })
 })
