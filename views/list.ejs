@@ -54,8 +54,8 @@
         method : 'DELETE',
         url : '/delete',
         data : { _id : e.target.dataset.id }
-        }).done(function(res) {
-          console.log('success')
+        }).done((res) => {
+          $(this).parent('li').fadeOut()
         }).fail(function(err) {
           console.log('fail')
         })
