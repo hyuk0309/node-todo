@@ -3,6 +3,8 @@ const app = express()
 app.use(express.urlencoded({extended: true})) 
 const MongoClient = require('mongodb').MongoClient;
 app.set('view engine', 'ejs')
+const methodOverride = require('method-override')
+app.use(methodOverride('_method'))
 
 app.use('/public', express.static('public'))
 
@@ -69,4 +71,14 @@ app.get('/detail/:id', (req, res) => {
     db.collection('post').findOne({_id : parseInt(req.params.id)}, (err, result) => {
         res.render('detail.ejs', {data : result})
     })
+})
+
+app.get('/edit/:id', (req, res) => {
+    db.collection('post').findOne({_id : parseInt(req.params.id)}, (err, result) => {
+        res.render('edit.ejs', { post : result})
+    })
+})
+
+app.put('/edit/:id', (req, res) => {
+    console.log(req)
 })
