@@ -2,11 +2,12 @@ const express = require('express')
 const app = express()
 app.use(express.urlencoded({extended: true})) 
 const MongoClient = require('mongodb').MongoClient;
-app.set('view engine', 'ejs')
+app.use('/public', express.static('public'))
 const methodOverride = require('method-override')
 app.use(methodOverride('_method'))
 
-app.use('/public', express.static('public'))
+
+app.set('view engine', 'ejs')
 
 var db
 MongoClient.connect('mongodb+srv://admin:admin123@cluster0.y6p2d0u.mongodb.net/?retryWrites=true&w=majority', function(err, client) {
@@ -79,6 +80,12 @@ app.get('/edit/:id', (req, res) => {
     })
 })
 
-app.put('/edit/:id', (req, res) => {
-    console.log(req)
+app.put('/edit', (req, res) => {
+    db.collection('post').updateOne(
+        { _id : parseInt(req.body.id) },
+        { $set : { 제목 : req.body.title, 날짜 : req.body.date }},
+        (err, result) => {
+            console.log('수정완료')
+            res.redirect('/list')
+        })
 })
