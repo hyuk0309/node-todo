@@ -123,3 +123,12 @@ passport.use(new LocalStrategy({
         }
     })
 }))
+
+// session 만들고 session_id 쿠키로 반환
+passport.serializeUser((user, done) => {
+    done(null, user.id)
+})
+
+passport.deserializeUser((id, done) => {
+    done(null, {})
+})
