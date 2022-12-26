@@ -130,5 +130,19 @@ passport.serializeUser((user, done) => {
 })
 
 passport.deserializeUser((id, done) => {
-    done(null, {})
+    db.collection('login').findOne({ id: id}, (err, result) => {
+        done(null, result)
+    })
 })
+
+app.get('/mypage', hasAuthenticated, (req, res) => {
+    res.render('mypage.ejs', { user : req.user })
+})
+
+function hasAuthenticated(req, res, next) {
+    if (req.user) {
+        next()
+    } else {
+        res.redirect('/login')
+    }
+}
