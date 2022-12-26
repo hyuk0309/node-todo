@@ -6,6 +6,14 @@ app.use('/public', express.static('public'))
 const methodOverride = require('method-override')
 app.use(methodOverride('_method'))
 
+const password = require('passport')
+const LocalStrategy = require('passport-local').Strategy
+const session = require('express-session');
+const passport = require('passport');
+
+app.use(session({secret : '비밀코드', resave : true, saveUninitialized : false}))
+app.use(passport.initialize())
+app.use(passport.session())
 
 app.set('view engine', 'ejs')
 
@@ -89,3 +97,29 @@ app.put('/edit', (req, res) => {
             res.redirect('/list')
         })
 })
+
+app.get('/login', (req, res) => {
+    res.render('login.ejs')
+})
+
+app.post('/login', passport.authenticate('local', {failureRedirect : '/fail'}), (req, res) => {
+    res.redirect('/')
+})
+
+passport.use(new LocalStrategy({
+    usernameField: 'id',
+    passwordField: 'pw',
+    session: true,
+    passReqToCallback: false
+}, function (inputId, inputPw, done) {
+    db.collection('login').findOne({ id: inputId}, function(err, result) {
+        if (err) return done(err)
+
+        if (!result) return done(null, false, { message : '존재하지않는 아이디요' })
+        if (inputPw == result.pw) {
+            return done(null, result)
+        } else {
+            return done(null, false, { message : '비번틀렸어요' })
+        }
+    })
+}))
